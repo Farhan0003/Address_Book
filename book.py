@@ -59,8 +59,8 @@ def main():
         address = input("Enter Address: ")
         city = input("Enter City: ")
         state = input("Enter State: ")
-        zip_code = input("Enter Zip: ")
-        phone_number = input("Enter Phone Number: ")
+        zip_code = int(input("Enter Zip: "))
+        phone_number = int(input("Enter Phone Number: "))
         email = input("Enter Email: ")
 
         if not all([first_name, last_name, address, city, state, zip_code, phone_number, email]):
