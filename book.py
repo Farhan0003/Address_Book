@@ -22,7 +22,7 @@ class Contact:
 
 
 class AddressBook:
-    """Class representing the address book that holds multiple contacts."""
+    """Class representing the address book which holds multiple contacts."""
 
     def __init__(self):
         self.contacts = []
@@ -53,6 +53,18 @@ class AddressBook:
         except Exception as e:
             logging.error(f"Error editing contact: {e}")
 
+    def delete_contact(self, first_name, last_name):
+        """Deletes a contact by first and last name."""
+        try:
+            for contact in self.contacts:
+                if contact.first_name == first_name and contact.last_name == last_name:
+                    self.contacts.remove(contact)
+                    logging.info("Contact deleted successfully!")
+                    return
+            logging.warning("Contact not found.")
+        except Exception as e:
+            logging.error(f"Error deleting contact: {e}")
+
     def display_contacts(self):
         """Displays all contacts in the address book."""
         try:
@@ -72,7 +84,7 @@ def main():
     print("Welcome to the Address Book")
 
     while True:
-        print("\n1. Add Contact\n2. Display Contacts\n3. Edit Contact\n4. Exit")
+        print("\n1. Add Contact\n2. Display Contacts\n3. Edit Contact\n4. Delete Contact\n5. Exit")
         choice = input("Enter your choice: ")
 
         try:
@@ -98,6 +110,11 @@ def main():
                 address_book.edit_contact(first_name, last_name)
 
             elif choice == '4':
+                first_name = input("Enter First Name: ")
+                last_name = input("Enter Last Name: ")
+                address_book.delete_contact(first_name, last_name)
+
+            elif choice == '5':
                 logging.info("Exiting Address Book.")
                 break
 
