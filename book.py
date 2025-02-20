@@ -1,6 +1,6 @@
 import logging
 
-logging.basicConfig(filename='Book.log',level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 class Contact:
     """Class representing a contact in the address book."""
@@ -24,14 +24,15 @@ class Contact:
 class AddressBook:
     """Class representing the address book which holds multiple contacts."""
 
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
         self.contacts = []
 
     def add_contact(self, contact):
         """Adds a new contact to the address book."""
         try:
             self.contacts.append(contact)
-            logging.info("Contact added successfully!")
+            logging.info(f"Contact added successfully to {self.name}!")
         except Exception as e:
             logging.error(f"Error adding contact: {e}")
 
@@ -40,13 +41,13 @@ class AddressBook:
         try:
             for contact in self.contacts:
                 if contact.first_name == first_name and contact.last_name == last_name:
-                    logging.info(f"Contact found: {contact}")
-                    contact.address = input("Enter new Address: ")
-                    contact.city = input("Enter new City: ")
-                    contact.state = input("Enter new State: ")
-                    contact.zip_code = input("Enter new Zip: ")
-                    contact.phone_number = input("Enter new Phone Number: ")
-                    contact.email = input("Enter new Email: ")
+                    logging.info(f"Contact found in {self.name}: {contact}")
+                    contact.address = input("Enter new Address: ").strip()
+                    contact.city = input("Enter new City: ").strip()
+                    contact.state = input("Enter new State: ").strip()
+                    contact.zip_code = input("Enter new Zip: ").strip()
+                    contact.phone_number = input("Enter new Phone Number: ").strip()
+                    contact.email = input("Enter new Email: ").strip()
                     logging.info("Contact updated successfully!")
                     return
             logging.warning("Contact not found.")
@@ -69,8 +70,9 @@ class AddressBook:
         """Displays all contacts in the address book."""
         try:
             if not self.contacts:
-                logging.info("Address Book is empty.")
+                logging.info(f"Address Book '{self.name}' is empty.")
             else:
+                print(f"\nContacts in Address Book: {self.name}")
                 for contact in self.contacts:
                     print(contact)
         except Exception as e:
@@ -78,52 +80,84 @@ class AddressBook:
 
 
 def main():
-    """Main function to interact with the address book."""
+    """Main function to interact with multiple address books."""
+    address_books = {}
+    current_address_book = None
 
-    address_book = AddressBook()
-    print("Welcome to the Address Book")
+    print("Welcome to the Address Book System")
 
     while True:
-        print("\n1. Add Contact\n2. Display Contacts\n3. Edit Contact\n4. Delete Contact\n5. Exit")
+        print("\n1. Create Address Book\n2. Switch Address Book\n3. Add Contact\n4. Display Contacts\n5. Edit Contact\n6. Delete Contact\n7. Exit")
         choice = input("Enter your choice: ").strip()
 
         try:
             if choice == '1':
-                num = int(input("\nHow many people do you want to add to the book? ").strip())
+                book_name = input("Enter new Address Book name: ").strip()
+                if book_name in address_books:
+                    print("Address Book already exists.")
+                else:
+                    address_books[book_name] = AddressBook(book_name)
+                    current_address_book = address_books[book_name]
+                    logging.info(f"Address Book '{book_name}' created and switched to.")
+                    print(f"Switched to new Address Book: {book_name}")
 
-                for i in range(num):
-                    print(f"\nEnter details for person {i + 1}")
+            elif choice == '2':
+                if not address_books:
+                    print("No Address Books available. Create one first.")
+                else:
+                    print("Available Address Books:", ', '.join(address_books.keys()))
+                    book_name = input("Enter Address Book name to switch: ").strip()
+                    if book_name in address_books:
+                        current_address_book = address_books[book_name]
+                        print(f"Switched to Address Book: {book_name}")
+                    else:
+                        print("Address Book not found.")
+
+            elif choice == '3':
+                if current_address_book is None:
+                    print("Please create or switch to an Address Book first.")
+                else:
                     first_name = input("Enter First Name: ").strip()
                     last_name = input("Enter Last Name: ").strip()
                     address = input("Enter Address: ").strip()
                     city = input("Enter City: ").strip()
                     state = input("Enter State: ").strip()
-                    zip_code = input("Enter Zip: ").strip()
-                    phone_number = input("Enter Phone Number: ").strip()
+                    zip_code = int(input("Enter Zip: ")).strip()
+                    phone_number =int(input("Enter Phone Number: ")).strip()
                     email = input("Enter Email: ").strip()
 
                     contact = Contact(first_name, last_name, address, city, state, zip_code, phone_number, email)
-                    address_book.add_contact(contact)
-
-            elif choice == '2':
-                address_book.display_contacts()
-
-            elif choice == '3':
-                first_name = input("Enter First Name: ").strip()
-                last_name = input("Enter Last Name: ").strip()
-                address_book.edit_contact(first_name, last_name)
+                    current_address_book.add_contact(contact)
 
             elif choice == '4':
-                first_name = input("Enter First Name: ").strip()
-                last_name = input("Enter Last Name: ").strip()
-                address_book.delete_contact(first_name, last_name)
+                if current_address_book is None:
+                    print("Please create or switch to an Address Book first.")
+                else:
+                    current_address_book.display_contacts()
 
             elif choice == '5':
-                logging.info("Exiting Address Book.")
+                if current_address_book is None:
+                    print("Please create or switch to an Address Book first.")
+                else:
+                    first_name = input("Enter First Name: ").strip()
+                    last_name = input("Enter Last Name: ").strip()
+                    current_address_book.edit_contact(first_name, last_name)
+
+            elif choice == '6':
+                if current_address_book is None:
+                    print("Please create or switch to an Address Book first.")
+                else:
+                    first_name = input("Enter First Name: ").strip()
+                    last_name = input("Enter Last Name: ").strip()
+                    current_address_book.delete_contact(first_name, last_name)
+
+            elif choice == '7':
+                logging.info("Exiting Address Book System.")
                 break
 
             else:
-                logging.warning("Invalid choice. Please try again.")
+                print("Invalid choice. Please try again.")
+
         except Exception as e:
             logging.error(f"Error in main loop: {e}")
 
