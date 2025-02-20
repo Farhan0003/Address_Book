@@ -79,39 +79,43 @@ class AddressBook:
 
 def main():
     """Main function to interact with the address book."""
-    address_book = AddressBook()
 
+    address_book = AddressBook()
     print("Welcome to the Address Book")
 
     while True:
         print("\n1. Add Contact\n2. Display Contacts\n3. Edit Contact\n4. Delete Contact\n5. Exit")
-        choice = input("Enter your choice: ")
+        choice = input("Enter your choice: ").strip()
 
         try:
             if choice == '1':
-                first_name = input("Enter First Name: ")
-                last_name = input("Enter Last Name: ")
-                address = input("Enter Address: ")
-                city = input("Enter City: ")
-                state = input("Enter State: ")
-                zip_code = input("Enter Zip: ")
-                phone_number = input("Enter Phone Number: ")
-                email = input("Enter Email: ")
+                num = int(input("\nHow many people do you want to add to the book? ").strip())
 
-                contact = Contact(first_name, last_name, address, city, state, zip_code, phone_number, email)
-                address_book.add_contact(contact)
+                for i in range(num):
+                    print(f"\nEnter details for person {i + 1}")
+                    first_name = input("Enter First Name: ").strip()
+                    last_name = input("Enter Last Name: ").strip()
+                    address = input("Enter Address: ").strip()
+                    city = input("Enter City: ").strip()
+                    state = input("Enter State: ").strip()
+                    zip_code = input("Enter Zip: ").strip()
+                    phone_number = input("Enter Phone Number: ").strip()
+                    email = input("Enter Email: ").strip()
+
+                    contact = Contact(first_name, last_name, address, city, state, zip_code, phone_number, email)
+                    address_book.add_contact(contact)
 
             elif choice == '2':
                 address_book.display_contacts()
 
             elif choice == '3':
-                first_name = input("Enter First Name: ")
-                last_name = input("Enter Last Name: ")
+                first_name = input("Enter First Name: ").strip()
+                last_name = input("Enter Last Name: ").strip()
                 address_book.edit_contact(first_name, last_name)
 
             elif choice == '4':
-                first_name = input("Enter First Name: ")
-                last_name = input("Enter Last Name: ")
+                first_name = input("Enter First Name: ").strip()
+                last_name = input("Enter Last Name: ").strip()
                 address_book.delete_contact(first_name, last_name)
 
             elif choice == '5':
