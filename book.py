@@ -141,11 +141,16 @@ class AddressBook:
         for key, count in count_dict.items():
             print(f"{key}: {count} contacts")
     
-    def sort_contacts(self):
-        """Sorts contacts alphabetically by first name."""
-        self.contacts.sort(key=lambda contact: (contact.first_name.lower(), contact.last_name.lower()))
-        print("Contacts sorted alphabetically by name.")
-        logging.info(f"Contacts in {self.name} sorted alphabetically.")
+    def sort_contacts(self, criteria):
+        """Sorts contacts in the address book by the given criteria."""
+        try:
+            if criteria == 'name':
+                self.contacts.sort(key=lambda c: c.first_name.lower())
+            elif criteria == 'city':
+                self.contacts.sort(key=lambda c: c.city.lower())
+            logging.info(f"Contacts sorted by {criteria}.")
+        except Exception as e:
+            logging.error(f"Error sorting contacts: {e}")
 
 
 def main():
@@ -156,7 +161,7 @@ def main():
     print("Welcome to the Address Book System")
 
     while True:
-        print("\n1. Create Address Book\n2. Switch Address Book\n3. Add Contact\n4. Display Contacts\n5. Edit Contact\n6. Delete Contact\n7. Search Person by City or State\n8. Count Contacts by City or State\n9. Sort by Name\n10. Exit")
+        print("\n1. Create Address Book\n2. Switch Address Book\n3. Add Contact\n4. Display Contacts\n5. Edit Contact\n6. Delete Contact\n7. Search Person by City or State\n8. Count Contacts by City or State\n9. Sort Contacts Alphabetically\n10. Exit")
         choice = input("Enter your choice: ").strip()
 
         try:
@@ -230,7 +235,16 @@ def main():
                 if current_address_book is None:
                     print("Please create or switch to an Address Book first.")
                 else:
-                    current_address_book.sort_contacts()
+                    print("Sort Options:")
+                    print("1. Sort by Name")
+                    print("2. Sort by City")
+                    sort_choice = input("Enter your choice: ").strip()
+                    if sort_choice == '1':
+                        current_address_book.sort_contacts('name')
+                    elif sort_choice == '2':
+                        current_address_book.sort_contacts('city')
+                    else:
+                        print("Invalid choice. Sorting canceled.")
             
             elif choice == '10':
                 logging.info("Exiting Address Book System.")
