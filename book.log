@@ -1,0 +1,83 @@
+INFO:root:Welcome to the Address Book
+INFO:root:Address Book is empty.
+INFO:root:Contact added successfully!
+WARNING:root:Invalid choice. Please try again.
+WARNING:root:Invalid choice. Please try again.
+WARNING:root:Invalid choice. Please try again.
+WARNING:root:Invalid choice. Please try again.
+WARNING:root:Invalid choice. Please try again.
+INFO:root:Exiting Address Book.
+INFO:root:Address Book 'python -u "c:\Users\farhan\OneDrive\Desktop\Bridgelab_training\python_prog\Address_book\UC10_Number_of_contacts.py"' created and switched to.
+INFO:root:Address Book 'book1' created and switched to.
+INFO:root:Contact added successfully to book1!
+INFO:root:Address Book 'book1' created and switched to.
+INFO:root:Contact added successfully to book1!
+INFO:root:Contact added successfully to book1!
+ERROR:root:Error in main loop: type object 'AddressBook' has no attribute 'count_by_city_or_state'
+ERROR:root:Error in main loop: type object 'AddressBook' has no attribute 'count_by_city_or_state'
+INFO:root:Address Book 'book1' created and switched to.
+INFO:root:Contact added successfully to book1!
+INFO:root:Address Book 'book1' created and switched to.
+INFO:root:Contact added successfully to book1!
+INFO:root:Contact added successfully to book1!
+INFO:root:Address Book 'book1' created and switched to.
+INFO:root:Contact added successfully to book1!
+INFO:root:Contact added successfully to book1!
+INFO:root:Contacts in book1 sorted alphabetically.
+INFO:root:Address Book 'book1' created and switched to.
+INFO:root:Contact added successfully to book1!
+INFO:root:Contact added successfully to book1!
+INFO:root:Contacts sorted by name.
+INFO:root:Contact added successfully to book1!
+INFO:root:Contacts sorted by name.
+INFO:root:Contacts sorted by city.
+INFO:root:Address Book 'book1' created and switched to.
+INFO:root:Contact added successfully to book1!
+INFO:root:Contact added successfully to book1!
+INFO:root:Address Book 'book.py' created and switched to.
+INFO:root:Contact added successfully to book.py!
+WARNING:root:contacts.json not found. Creating a new file.
+INFO:root:contacts.json created successfully.
+INFO:root:Address Book 'book' created and switched to.
+INFO:root:Contact added and saved to contacts.json.
+INFO:root:Address Book 'book2' created and switched to.
+INFO:root:Contact added and saved to contacts.json.
+INFO:root:Contact added and saved to contacts.json.
+INFO:root:Address Book 'book3' created and switched to.
+ERROR:root:Error in main loop: invalid literal for int() with base 10: 'gguj'
+INFO:root:Contact added and saved to contacts.json.
+INFO:root:Address Book 'book1' created and switched to.
+INFO:root:Contact added successfully to book1!
+INFO:root:Address Book 'book2' created and switched to.
+INFO:root:Contact added successfully to book2!
+ERROR:root:Error in main loop: name 'AddressBook' is not defined
+ERROR:root:Error in main loop: name 'AddressBook' is not defined
+WARNING:root:book1.csv not found. Creating a new file.
+INFO:root:Address Book 'book1' created and switched to.
+INFO:root:Contact added successfully to book1.
+WARNING:root:book2.csv not found. Creating a new file.
+INFO:root:Address Book 'book2' created and switched to.
+INFO:root:Contact added successfully to book2.
+INFO:root:Address Book 'book1' created and switched to.
+ERROR:root:Error in main loop: 'Contact' object has no attribute 'to_list'
+INFO:root:Address Book 'book1' created and switched to.
+INFO:root:Contact added successfully to book1.
+INFO:root:Address Book 'book1' created and switched to.
+INFO:root:Contact added successfully to book1.
+INFO:root:Address Book 'book1' created and switched to.
+INFO:root:Contacts saved to book1.csv
+INFO:root:Contact added successfully to book1.
+WARNING:root:book1.txt not found. Creating a new file.
+INFO:root:Address Book 'book1' created and switched to.
+WARNING:root:book2.txt not found. Creating a new file.
+INFO:root:Address Book 'book2' created and switched to.
+INFO:root:Contacts saved to book2.txt
+INFO:root:Contact added successfully to book2.
+INFO:root:Contacts saved to book1.txt
+INFO:root:Contact added successfully to book1.
+WARNING:root:book1.json not found. Creating a new file.
+INFO:root:book1.json created successfully.
+INFO:root:Address Book 'book1' created and switched to.
+WARNING:root:book2.json not found. Creating a new file.
+INFO:root:book2.json created successfully.
+INFO:root:Address Book 'book2' created and switched to.
