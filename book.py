@@ -1,6 +1,6 @@
-import os
-import csv
 import logging
+import json
+import os
 
 logging.basicConfig(filename='Book.log',level=logging.INFO)
 
@@ -19,104 +19,94 @@ class Contact:
         self.phone_number = phone_number
         self.email = email
 
+    def to_dict(self):
+        """Convert contact to dictionary format for JSON storage."""
+        return {
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "address": self.address,
+            "city": self.city,
+            "state": self.state,
+            "zip_code": self.zip_code,
+            "phone_number": self.phone_number,
+            "email": self.email
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        """Create Contact object from a dictionary."""
+        return cls(
+            data["first_name"], data["last_name"], data["address"],
+            data["city"], data["state"], data["zip_code"],
+            data["phone_number"], data["email"]
+        )
+    
     def __str__(self):
         return (f"Contact(First Name: {self.first_name}, Last Name: {self.last_name}, Address: {self.address}, "
                 f"City: {self.city}, State: {self.state}, Zip: {self.zip_code}, "
                 f"Phone: {self.phone_number}, Email: {self.email})")
 
-    def to_list(self):
-        """Convert contact attributes to a list for CSV writing."""
-        return [self.first_name, self.last_name, self.address, self.city, self.state, str(self.zip_code), str(self.phone_number), self.email]
-
-    @classmethod
-    def from_dict(cls, data):
-        """Create a Contact object from a dictionary (for CSV DictReader)."""
-        return cls(
-            data["first_name"],
-            data["last_name"],
-            data["address"],
-            data["city"],
-            data["state"],
-            data["zip_code"],
-            data["phone_number"],
-            data["email"]
-        )
 
 class AddressBook:
     """Class representing the address book which holds multiple contacts."""
+    
+    FILE_NAME = "contacts.json"
 
     def __init__(self, name):
         self.name = name
+        self.file_name = f"{self.name}.json"
         self.contacts = self.load_contacts()
-    
-    @property
-    def FILE_NAME(self):
-        """Dynamically create a CSV filename based on the address book name."""
-        return f"{self.name}.csv"
 
     def add_contact(self, contact):
-        """Adds a new contact and saves to CSV."""
-        self.contacts.append(contact)
-        self.save_contacts()
-        logging.info(f"Contact added successfully to {self.name}.")
+        """Adds a new contact and saves it to the file."""
+        try:
+            self.contacts.append(contact)
+            self.save_contacts()  
+            logging.info(f"Contact added and saved to {self.FILE_NAME}.")
+        except Exception as e:
+            logging.error(f"Error adding contact: {e}")
 
     def edit_contact(self, first_name, last_name):
         """Edits an existing contact by first and last name."""
-        for contact in self.contacts:
-            if contact.first_name == first_name and contact.last_name == last_name:
-                logging.info(f"Editing contact in {self.name}: {contact}")
-                contact.address = input("Enter new Address: ").strip()
-                contact.city = input("Enter new City: ").strip()
-                contact.state = input("Enter new State: ").strip()
-                contact.zip_code = input("Enter new Zip: ").strip()
-                contact.phone_number = input("Enter new Phone Number: ").strip()
-                contact.email = input("Enter new Email: ").strip()
-                self.save_contacts()
-                logging.info("Contact updated successfully!")
-                return
-        logging.warning("Contact not found.")
+        try:
+            for contact in self.contacts:
+                if contact.first_name == first_name and contact.last_name == last_name:
+                    logging.info(f"Contact found in {self.name}: {contact}")
+                    contact.address = input("Enter new Address: ").strip()
+                    contact.city = input("Enter new City: ").strip()
+                    contact.state = input("Enter new State: ").strip()
+                    contact.zip_code = int(input("Enter new Zip: "))
+                    contact.phone_number = int(input("Enter new Phone Number: "))
+                    contact.email = input("Enter new Email: ").strip()
+                    self.save_contacts()
+                    logging.info("Contact updated successfully!")
+                    return
+            logging.warning("Contact not found.")
+        except Exception as e:
+            logging.error(f"Error editing contact: {e}")
 
     def delete_contact(self, first_name, last_name):
         """Deletes a contact by first and last name."""
-        for contact in self.contacts:
-            if contact.first_name == first_name and contact.last_name == last_name:
-                self.contacts.remove(contact)
-                self.save_contacts()
-                logging.info("Contact deleted successfully!")
-                return
-        logging.warning("Contact not found.")
+        try:
+            self.contacts = [contact for contact in self.contacts if not (contact["first_name"] == first_name and contact["last_name"] == last_name)]
+            self.save_contacts()  # Auto-save after deleting
+            logging.info("Contact deleted and saved successfully.")
+            
+        except Exception as e:
+            logging.error(f"Error deleting contact: {e}")
 
     def display_contacts(self):
-        """Displays all contacts."""
-        if not self.contacts:
-            print(f"Address Book '{self.name}' is empty.")
-        else:
-            print(f"\nContacts in Address Book: {self.name}")
-            for contact in self.contacts:
-                print(contact)
-
-    def save_contacts(self):
-        """Save contacts to a CSV file."""
-        with open(self.FILE_NAME, "w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(["first_name", "last_name", "address", "city", "state", "zip_code", "phone_number", "email"])
-            for contact in self.contacts:
-                writer.writerow(contact.to_list())
-
-    def load_contacts(self):
-        """Load contacts from the CSV file."""
-        if not os.path.exists(self.FILE_NAME):
-            logging.warning(f"{self.FILE_NAME} not found. Creating a new file.")
-            with open(self.FILE_NAME, "w", newline="") as file:
-                writer = csv.writer(file)
-                writer.writerow(["first_name", "last_name", "address", "city", "state", "zip_code", "phone_number", "email"])
-            return []
-
-        with open(self.FILE_NAME, "r") as file:
-            reader = csv.DictReader(file)
-            return [Contact.from_dict(row) for row in reader]
-
-   
+        """Displays all contacts in the address book."""
+        try:
+            if not self.contacts:
+                logging.info(f"Address Book '{self.name}' is empty.")
+            else:
+                print(f"\nContacts in Address Book: {self.name}")
+                for contact in self.contacts:
+                    print(contact)
+        except Exception as e:
+            logging.error(f"Error displaying contacts: {e}")
+    
     @staticmethod
     def search_person(address_books):
         """Search for a person by city or state across multiple address books."""
@@ -186,9 +176,36 @@ class AddressBook:
                 self.contacts.sort(key=lambda c: c.first_name.lower())
             elif criteria == 'city':
                 self.contacts.sort(key=lambda c: c.city.lower())
+            self.save_contacts()
             logging.info(f"Contacts sorted by {criteria}.")
         except Exception as e:
             logging.error(f"Error sorting contacts: {e}")
+
+    def save_contacts(self):
+        """Save contacts to a JSON file specific to the address book."""
+        with open(self.file_name, "w") as file:
+            json.dump([contact.to_dict() for contact in self.contacts], file, indent=4)
+
+    def load_contacts(self):
+        """Load contacts from the specific JSON file, or create an empty one if it doesn't exist."""
+        if not os.path.exists(self.file_name):
+            logging.warning(f"{self.file_name} not found. Creating a new file.")
+            try:
+                with open(self.file_name, "w") as file:
+                    json.dump([], file)  # Create an empty JSON file
+                logging.info(f"{self.file_name} created successfully.")
+                return []
+            except Exception as e:
+                logging.error(f"Failed to create {self.file_name}: {e}")
+                return []
+
+        try:
+            with open(self.file_name, "r") as file:
+                contacts_data = json.load(file)
+                return [Contact.from_dict(data) for data in contacts_data]
+        except (json.JSONDecodeError, FileNotFoundError):
+            logging.error(f"{self.file_name} is corrupted or missing. Resetting to an empty list.")
+            return []
 
 
 def main():
