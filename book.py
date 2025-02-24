@@ -140,6 +140,12 @@ class AddressBook:
         print("\nContact Count:")
         for key, count in count_dict.items():
             print(f"{key}: {count} contacts")
+    
+    def sort_contacts(self):
+        """Sorts contacts alphabetically by first name."""
+        self.contacts.sort(key=lambda contact: (contact.first_name.lower(), contact.last_name.lower()))
+        print("Contacts sorted alphabetically by name.")
+        logging.info(f"Contacts in {self.name} sorted alphabetically.")
 
 
 def main():
@@ -150,7 +156,7 @@ def main():
     print("Welcome to the Address Book System")
 
     while True:
-        print("\n1. Create Address Book\n2. Switch Address Book\n3. Add Contact\n4. Display Contacts\n5. Edit Contact\n6. Delete Contact\n7. Search Person by City or State\n8. Count Contacts by City or State\n9. Exit")
+        print("\n1. Create Address Book\n2. Switch Address Book\n3. Add Contact\n4. Display Contacts\n5. Edit Contact\n6. Delete Contact\n7. Search Person by City or State\n8. Count Contacts by City or State\n9. Sort by Name\n10. Exit")
         choice = input("Enter your choice: ").strip()
 
         try:
@@ -219,8 +225,14 @@ def main():
 
             elif choice == '8':
                 AddressBook.count_by_city_or_state(address_books)
-            
+
             elif choice == '9':
+                if current_address_book is None:
+                    print("Please create or switch to an Address Book first.")
+                else:
+                    current_address_book.sort_contacts()
+            
+            elif choice == '10':
                 logging.info("Exiting Address Book System.")
                 break
 
