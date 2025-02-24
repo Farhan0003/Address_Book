@@ -1,6 +1,6 @@
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(filename='Book.log',level=logging.INFO)
 
 class Contact:
     """Class representing a contact in the address book."""
