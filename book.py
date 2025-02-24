@@ -1,4 +1,5 @@
 import os
+import csv
 import logging
 
 logging.basicConfig(filename='Book.log',level=logging.INFO)
@@ -23,31 +24,38 @@ class Contact:
                 f"City: {self.city}, State: {self.state}, Zip: {self.zip_code}, "
                 f"Phone: {self.phone_number}, Email: {self.email})")
 
-    def to_string(self):
-        """Convert contact attributes to a formatted string for saving in TXT."""
-        return f"{self.first_name}|{self.last_name}|{self.address}|{self.city}|{self.state}|{self.zip_code}|{self.phone_number}|{self.email}\n"
+    def to_list(self):
+        """Convert contact attributes to a list for CSV writing."""
+        return [self.first_name, self.last_name, self.address, self.city, self.state, str(self.zip_code), str(self.phone_number), self.email]
 
     @classmethod
-    def from_string(cls, line):
-        """Create a Contact object from a formatted string (from TXT)."""
-        parts = line.strip().split("|")
-        return cls(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7])
+    def from_dict(cls, data):
+        """Create a Contact object from a dictionary (for CSV DictReader)."""
+        return cls(
+            data["first_name"],
+            data["last_name"],
+            data["address"],
+            data["city"],
+            data["state"],
+            data["zip_code"],
+            data["phone_number"],
+            data["email"]
+        )
 
 class AddressBook:
     """Class representing the address book which holds multiple contacts."""
 
     def __init__(self, name):
         self.name = name
-        self.contacts = []
-        self.load_contacts()
-
+        self.contacts = self.load_contacts()
+    
     @property
     def FILE_NAME(self):
-        """Dynamically create a txt filename based on the address book name."""
-        return f"{self.name}.txt"
+        """Dynamically create a CSV filename based on the address book name."""
+        return f"{self.name}.csv"
 
     def add_contact(self, contact):
-        """Adds a new contact and saves to TXT."""
+        """Adds a new contact and saves to CSV."""
         self.contacts.append(contact)
         self.save_contacts()
         logging.info(f"Contact added successfully to {self.name}.")
@@ -88,24 +96,27 @@ class AddressBook:
                 print(contact)
 
     def save_contacts(self):
-        """Save contacts to a TXT file."""
-        with open(self.FILE_NAME, "w") as file:
+        """Save contacts to a CSV file."""
+        with open(self.FILE_NAME, "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(["first_name", "last_name", "address", "city", "state", "zip_code", "phone_number", "email"])
             for contact in self.contacts:
-                file.write(contact.to_string())
-        logging.info(f"Contacts saved to {self.FILE_NAME}")
-    
+                writer.writerow(contact.to_list())
+
     def load_contacts(self):
-        """Load contacts from the TXT file."""
+        """Load contacts from the CSV file."""
         if not os.path.exists(self.FILE_NAME):
             logging.warning(f"{self.FILE_NAME} not found. Creating a new file.")
-            open(self.FILE_NAME, "w").close()  
-            self.contacts = []  
-            return
+            with open(self.FILE_NAME, "w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(["first_name", "last_name", "address", "city", "state", "zip_code", "phone_number", "email"])
+            return []
 
         with open(self.FILE_NAME, "r") as file:
-            self.contacts = [Contact.from_string(line) for line in file if line.strip()]
-        logging.info(f"Contacts loaded from {self.FILE_NAME}")
+            reader = csv.DictReader(file)
+            return [Contact.from_dict(row) for row in reader]
 
+   
     @staticmethod
     def search_person(address_books):
         """Search for a person by city or state across multiple address books."""
