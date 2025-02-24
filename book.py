@@ -92,10 +92,10 @@ class AddressBook:
         choice = input("Enter your choice: ").strip()
 
         if choice == '1':
-            search_term = input("Enter City to search: ").strip()
+            search_term = input("Enter City to search: ")
             search_field = 'city'
         elif choice == '2':
-            search_term = input("Enter State to search: ").strip()
+            search_term = input("Enter State to search: ")
             search_field = 'state'
         else:
             print("Invalid choice. Returning to main menu.")
