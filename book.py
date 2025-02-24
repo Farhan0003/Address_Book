@@ -1,3 +1,4 @@
+import os
 import logging
 
 logging.basicConfig(filename='Book.log',level=logging.INFO)
@@ -22,6 +23,15 @@ class Contact:
                 f"City: {self.city}, State: {self.state}, Zip: {self.zip_code}, "
                 f"Phone: {self.phone_number}, Email: {self.email})")
 
+    def to_string(self):
+        """Convert contact attributes to a formatted string for saving in TXT."""
+        return f"{self.first_name}|{self.last_name}|{self.address}|{self.city}|{self.state}|{self.zip_code}|{self.phone_number}|{self.email}\n"
+
+    @classmethod
+    def from_string(cls, line):
+        """Create a Contact object from a formatted string (from TXT)."""
+        parts = line.strip().split("|")
+        return cls(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7])
 
 class AddressBook:
     """Class representing the address book which holds multiple contacts."""
@@ -29,56 +39,73 @@ class AddressBook:
     def __init__(self, name):
         self.name = name
         self.contacts = []
+        self.load_contacts()
+
+    @property
+    def FILE_NAME(self):
+        """Dynamically create a txt filename based on the address book name."""
+        return f"{self.name}.txt"
 
     def add_contact(self, contact):
-        """Adds a new contact to the address book."""
-        try:
-            self.contacts.append(contact)
-            logging.info(f"Contact added successfully to {self.name}!")
-        except Exception as e:
-            logging.error(f"Error adding contact: {e}")
+        """Adds a new contact and saves to TXT."""
+        self.contacts.append(contact)
+        self.save_contacts()
+        logging.info(f"Contact added successfully to {self.name}.")
 
     def edit_contact(self, first_name, last_name):
         """Edits an existing contact by first and last name."""
-        try:
-            for contact in self.contacts:
-                if contact.first_name == first_name and contact.last_name == last_name:
-                    logging.info(f"Contact found in {self.name}: {contact}")
-                    contact.address = input("Enter new Address: ").strip()
-                    contact.city = input("Enter new City: ").strip()
-                    contact.state = input("Enter new State: ").strip()
-                    contact.zip_code = input("Enter new Zip: ").strip()
-                    contact.phone_number = input("Enter new Phone Number: ").strip()
-                    contact.email = input("Enter new Email: ").strip()
-                    logging.info("Contact updated successfully!")
-                    return
-            logging.warning("Contact not found.")
-        except Exception as e:
-            logging.error(f"Error editing contact: {e}")
+        for contact in self.contacts:
+            if contact.first_name == first_name and contact.last_name == last_name:
+                logging.info(f"Editing contact in {self.name}: {contact}")
+                contact.address = input("Enter new Address: ").strip()
+                contact.city = input("Enter new City: ").strip()
+                contact.state = input("Enter new State: ").strip()
+                contact.zip_code = input("Enter new Zip: ").strip()
+                contact.phone_number = input("Enter new Phone Number: ").strip()
+                contact.email = input("Enter new Email: ").strip()
+                self.save_contacts()
+                logging.info("Contact updated successfully!")
+                return
+        logging.warning("Contact not found.")
 
     def delete_contact(self, first_name, last_name):
         """Deletes a contact by first and last name."""
-        try:
-            for contact in self.contacts:
-                if contact.first_name == first_name and contact.last_name == last_name:
-                    self.contacts.remove(contact)
-                    logging.info("Contact deleted successfully!")
-                    return
-            logging.warning("Contact not found.")
-        except Exception as e:
-            logging.error(f"Error deleting contact: {e}")
+        for contact in self.contacts:
+            if contact.first_name == first_name and contact.last_name == last_name:
+                self.contacts.remove(contact)
+                self.save_contacts()
+                logging.info("Contact deleted successfully!")
+                return
+        logging.warning("Contact not found.")
 
     def display_contacts(self):
-        """Displays all contacts in the address book."""
-        try:
-            if not self.contacts:
-                logging.info(f"Address Book '{self.name}' is empty.")
-            else:
-                print(f"\nContacts in Address Book: {self.name}")
-                for contact in self.contacts:
-                    print(contact)
-        except Exception as e:
-            logging.error(f"Error displaying contacts: {e}")
+        """Displays all contacts."""
+        if not self.contacts:
+            print(f"Address Book '{self.name}' is empty.")
+        else:
+            print(f"\nContacts in Address Book: {self.name}")
+            for contact in self.contacts:
+                print(contact)
+
+    def save_contacts(self):
+        """Save contacts to a TXT file."""
+        with open(self.FILE_NAME, "w") as file:
+            for contact in self.contacts:
+                file.write(contact.to_string())
+        logging.info(f"Contacts saved to {self.FILE_NAME}")
+    
+    def load_contacts(self):
+        """Load contacts from the TXT file."""
+        if not os.path.exists(self.FILE_NAME):
+            logging.warning(f"{self.FILE_NAME} not found. Creating a new file.")
+            open(self.FILE_NAME, "w").close()  
+            self.contacts = []  
+            return
+
+        with open(self.FILE_NAME, "r") as file:
+            self.contacts = [Contact.from_string(line) for line in file if line.strip()]
+        logging.info(f"Contacts loaded from {self.FILE_NAME}")
+
     @staticmethod
     def search_person(address_books):
         """Search for a person by city or state across multiple address books."""
