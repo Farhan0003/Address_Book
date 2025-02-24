@@ -2,6 +2,8 @@ import logging
 
 logging.basicConfig(filename='Book.log',level=logging.INFO)
 
+address_books = {}
+current_address_book = None
 class Contact:
     """Class representing a contact in the address book."""
 
@@ -77,6 +79,41 @@ class AddressBook:
                     print(contact)
         except Exception as e:
             logging.error(f"Error displaying contacts: {e}")
+    @staticmethod
+    def search_person(address_books):
+        """Search for a person by city or state across multiple address books."""
+        if not address_books:
+            print("No Address Books available.")
+            return
+
+        print("\nSearch Options:")
+        print("1. Search by City")
+        print("2. Search by State")
+        choice = input("Enter your choice: ").strip()
+
+        if choice == '1':
+            search_term = input("Enter City to search: ").strip()
+            search_field = 'city'
+        elif choice == '2':
+            search_term = input("Enter State to search: ").strip()
+            search_field = 'state'
+        else:
+            print("Invalid choice. Returning to main menu.")
+            return
+
+        results_found = False
+
+        for book_name, address_book in address_books.items():
+            for contact in address_book.contacts:
+                if (search_field == 'city' and contact.city == search_term) or \
+                (search_field == 'state' and contact.state == search_term):
+                    print(f"\nFound in Address Book: {book_name}")
+                    print(contact)
+                    results_found = True
+
+        if not results_found:
+            print("No contacts found matching the search criteria.")
+
 
 
 def main():
@@ -87,7 +124,7 @@ def main():
     print("Welcome to the Address Book System")
 
     while True:
-        print("\n1. Create Address Book\n2. Switch Address Book\n3. Add Contact\n4. Display Contacts\n5. Edit Contact\n6. Delete Contact\n7. Exit")
+        print("\n1. Create Address Book\n2. Switch Address Book\n3. Add Contact\n4. Display Contacts\n5. Edit Contact\n6. Delete Contact\n7. Search Person by City or State\n8. Exit")
         choice = input("Enter your choice: ").strip()
 
         try:
@@ -122,8 +159,8 @@ def main():
                     address = input("Enter Address: ").strip()
                     city = input("Enter City: ").strip()
                     state = input("Enter State: ").strip()
-                    zip_code = int(input("Enter Zip: ")).strip()
-                    phone_number =int(input("Enter Phone Number: ")).strip()
+                    zip_code = int(input("Enter Zip: "))
+                    phone_number =int(input("Enter Phone Number: "))
                     email = input("Enter Email: ").strip()
 
                     contact = Contact(first_name, last_name, address, city, state, zip_code, phone_number, email)
@@ -150,8 +187,11 @@ def main():
                     first_name = input("Enter First Name: ").strip()
                     last_name = input("Enter Last Name: ").strip()
                     current_address_book.delete_contact(first_name, last_name)
-
+            
             elif choice == '7':
+                AddressBook.search_person(address_books)
+
+            elif choice == '8':
                 logging.info("Exiting Address Book System.")
                 break
 
