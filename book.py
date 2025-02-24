@@ -92,10 +92,10 @@ class AddressBook:
         choice = input("Enter your choice: ").strip()
 
         if choice == '1':
-            search_term = input("Enter City to search: ")
+            search_term = input("Enter City to search: ").strip()
             search_field = 'city'
         elif choice == '2':
-            search_term = input("Enter State to search: ")
+            search_term = input("Enter State to search: ").strip()
             search_field = 'state'
         else:
             print("Invalid choice. Returning to main menu.")
@@ -114,6 +114,32 @@ class AddressBook:
         if not results_found:
             print("No contacts found matching the search criteria.")
 
+    @staticmethod
+    def count_by_city_or_state(address_books):
+        """Count contacts by city or state across multiple address books."""
+        if not address_books:
+            print("No Address Books available.")
+            return
+
+        print("\nCount Options:")
+        print("1. Count by City")
+        print("2. Count by State")
+        choice = input("Enter your choice: ").strip()
+
+        if choice not in ['1', '2']:
+            print("Invalid choice. Returning to main menu.")
+            return
+
+        count_dict = {}
+
+        for address_book in address_books.values():
+            for contact in address_book.contacts:
+                key = contact.city if choice == '1' else contact.state
+                count_dict[key] = count_dict.get(key, 0) + 1
+
+        print("\nContact Count:")
+        for key, count in count_dict.items():
+            print(f"{key}: {count} contacts")
 
 
 def main():
@@ -124,7 +150,7 @@ def main():
     print("Welcome to the Address Book System")
 
     while True:
-        print("\n1. Create Address Book\n2. Switch Address Book\n3. Add Contact\n4. Display Contacts\n5. Edit Contact\n6. Delete Contact\n7. Search Person by City or State\n8. Exit")
+        print("\n1. Create Address Book\n2. Switch Address Book\n3. Add Contact\n4. Display Contacts\n5. Edit Contact\n6. Delete Contact\n7. Search Person by City or State\n8. Count Contacts by City or State\n9. Exit")
         choice = input("Enter your choice: ").strip()
 
         try:
@@ -192,6 +218,9 @@ def main():
                 AddressBook.search_person(address_books)
 
             elif choice == '8':
+                AddressBook.count_by_city_or_state(address_books)
+            
+            elif choice == '9':
                 logging.info("Exiting Address Book System.")
                 break
 
